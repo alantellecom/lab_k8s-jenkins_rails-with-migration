@@ -1,0 +1,51 @@
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: default
+  name: clean-complited-job-roles
+rules:
+- apiGroups: ["", "extensions", "apps", "batch"]
+  resources: ["*"]
+  verbs: ["*"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: clean-complited-job-roleBinding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: sa-clean-complited-job
+  namespace: default
+roleRef:
+  kind: Role
+  name: clean-complited-job-roles
+  apiGroup: ""
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sa-clean-complited-job
+  namespace: default
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: clean-complited-job-cronjob
+  namespace: default
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: sa-clean-complited-job
+          containers:
+          - name: kubectl
+            image: wernight/kubectl
+            command: 
+            - /bin/sh
+            - -c
+            - kubectl delete job $(kubectl get jobs | awk '$3 ~ 1' | awk '{print $1}')         
+          restartPolicy: OnFailure

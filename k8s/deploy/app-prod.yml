@@ -1,0 +1,25 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: webapp-production
+spec:
+  replicas: 1
+  template: 
+    metadata:
+      name: app
+      labels:
+        role: app
+        env: production
+    spec:
+      containers:
+        - name: webapp
+          image: gcr.io/project/image-name 
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 3000
+          envFrom:
+          - secretRef:
+              name: file-secret
+          env:
+          - name: RAILS_SERVE_STATIC_FILES
+            value: "true"

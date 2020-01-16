@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrate
+spec:
+  ttlSecondsAfterFinished: 0
+  completions: 1
+  template:
+    metadata:
+      name: db-migrate
+    spec:    
+      restartPolicy: Never
+      containers:
+      - name: db-migrate
+        image: gcr.io/project/image-name
+        args:  ["bundle", "exec", "rake", "db:migrate"]
+        envFrom:
+        - secretRef:
+            name: file-secret
+
+

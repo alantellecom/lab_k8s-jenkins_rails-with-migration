@@ -1,0 +1,10 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '--tag=$TAG_NAME', '.']
+- name: 'debian'
+  entrypoint: '/bin/bash'
+  args: ['-c', "sed -i 's#gcr.io/project/image-name#$TAG_NAME#g' k8s/deploy/*"]
+  args: ['-c', "sed -i 's#gcr.io/project/image-name#$TAG_NAME#g' k8s/jobs/*"]
+images: ['$TAG_NAME']
+
+
