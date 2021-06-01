@@ -3,7 +3,7 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   namespace: default
-  name: clean-complited-job-roles
+  name: clean-completed-job-roles
 rules:
 - apiGroups: ["", "extensions", "apps", "batch"]
   resources: ["*"]
@@ -12,27 +12,27 @@ rules:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: clean-complited-job-roleBinding
+  name: clean-completed-job-roleBinding
   namespace: default
 subjects:
 - kind: ServiceAccount
-  name: sa-clean-complited-job
+  name: sa-clean-completed-job
   namespace: default
 roleRef:
   kind: Role
-  name: clean-complited-job-roles
+  name: clean-completed-job-roles
   apiGroup: ""
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: sa-clean-complited-job
+  name: sa-clean-completed-job
   namespace: default
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: clean-complited-job-cronjob
+  name: clean-completed-job-cronjob
   namespace: default
 spec:
   schedule: "*/1 * * * *"
@@ -40,7 +40,7 @@ spec:
     spec:
       template:
         spec:
-          serviceAccountName: sa-clean-complited-job
+          serviceAccountName: sa-clean-completed-job
           containers:
           - name: kubectl
             image: wernight/kubectl
